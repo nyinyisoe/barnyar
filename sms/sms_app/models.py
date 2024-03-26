@@ -19,15 +19,22 @@ class AdminHOD(models.Model):
 
 class Staff(models.Model):
     id = models.AutoField(primary_key=True)
-    admin = models.OneToOneField(CustomUser, on_delete = models.CASCADE)
+    admin = models.OneToOneField(CustomUser,on_delete = models.CASCADE)
     address = models.TextField()
     create_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField(auto_created=True)
+    update_at = models.DateTimeField(auto_now_add=True)
     objects = models.Manager()
     
-class Courses(models.Model):
+class Grade(models.Model):
     id = models.AutoField(primary_key=True)
-    course_name= models.CharField(max_length=255)
+    grade_name= models.CharField(max_length=255)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now_add=True)
+    objects = models.Manager()
+
+class Cname(models.Model):
+    id = models.AutoField(primary_key=True)
+    class_name= models.CharField(max_length=255)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now_add=True)
     objects = models.Manager()
@@ -35,7 +42,7 @@ class Courses(models.Model):
 class Subject(models.Model):
     id = models.AutoField(primary_key=True)
     subject_name = models.CharField(max_length=255)
-    course_id = models.ForeignKey(Courses, on_delete=models.CASCADE)
+    grade_id = models.ForeignKey(Grade, on_delete=models.CASCADE)
     staff_id = models.ForeignKey(Staff,on_delete=models.CASCADE)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now_add=True)
@@ -47,13 +54,51 @@ class Students(models.Model):
     gender = models.CharField(max_length=255)
     profile_pic = models.FileField()
     address = models.CharField(max_length=255)
-    course_id = models.ForeignKey(Courses, on_delete= models.DO_NOTHING)
-    session_start_year = models.DateField()
-    session_end_year = models.DateField()
+    grade_id = models.ForeignKey(Grade, on_delete= models.DO_NOTHING)
+    class_id = models.ForeignKey(Cname, on_delete= models.DO_NOTHING)
+   # session_start_year = models.DateField()
+   # session_end_year = models.DateField()
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now_add=True)
-    objects = models.Manager()
+    name= models.CharField(max_length=255)
+    kha_reg_date= models.DateField()
+    student_id= models.CharField(max_length=250)
+    school_attended= models.CharField(max_length=255)
+    grade_attended= models.CharField(max_length=255)
+    year_attended= models.DateField()
+    dob=models.DateField()
+    pob=models.CharField(max_length=255)
+    nrc=models.CharField(max_length=255)
+    nationality= models.CharField(max_length=255)
+    religion= models.CharField(max_length=255)
+    academic_year= models.DateField()
+    father_name= models.CharField(max_length=255)
+    f_nrc=models.CharField(max_length=255)
+    f_qulification=models.CharField(max_length=255)
+    f_job=models.CharField(max_length=255)
+    f_phone=models.IntegerField()
+    f_address=models.CharField(max_length=255)
+    f_aorp=models.CharField(max_length=255)
+    mother_name= models.CharField(max_length=255)
+    m_nrc=models.CharField(max_length=255)
+    m_qulification=models.CharField(max_length=255)
+    m_job=models.CharField(max_length=255)
+    m_phone=models.IntegerField()
+    m_address=models.CharField(max_length=255)
+    m_aorp=models.CharField(max_length=255)
+    guradian_name= models.CharField(max_length=255)
+    g_nrc=models.CharField(max_length=255)
+    g_qulification=models.CharField(max_length=255)
+    g_job=models.CharField(max_length=255)
+    g_phone=models.IntegerField()
+    g_address=models.CharField(max_length=255)
+    st_comment=models.CharField(max_length=255)
 
+
+
+    objects = models.Manager()
+    
+    
 class Attendance(models.Model):
     id = models.AutoField(primary_key=True)
     subject_id = models.ForeignKey(Subject, on_delete=models.DO_NOTHING)
@@ -144,7 +189,7 @@ def create_user_profile(sender, instance, created,**kwargs):
         if instance.user_type==1:
             AdminHOD.objects.create(admin=instance)
         if instance.user_type==2:
-            Staff.objects.create(Admin=instance)
+            Staff.objects.create(admin=instance,address="")
         if instance.user_type==3:
             Students.objects.create(admin=instance)
 
@@ -154,6 +199,6 @@ def save_user_profile(sender,instance,**kwargs):
     if instance.user_type==1:
         instance.adminhod.save() 
     if instance.user_type==2:
-        instance.staffs.save()       
+        instance.staff.save()       
     if instance.user_type==3:
         instance.students.save()
